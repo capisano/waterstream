@@ -1,0 +1,32 @@
+
+
+This works for a batch of videos if the watermark is in the same place consistently across them:
+
+Load one video into Avidemux (https://www.fosshub.com/Avidemux.html). 
+If you are on linux you might be able to get it through your package manager.
+
+We aren't actually going to do the editing in this application. But it has a feature that we can use to 
+allow us to script something up.
+
+In Avidemux under Video Output on the left-hand side, select a codec, and then click on the filters button.
+
+The filter we are looking for is MPlayer DeLogo. It might be under Sharpness. Once you open it you'll have
+a new window with the first frame of your video and an adjustable box. Use this window to find the right X,Y,Width,Height
+settings are for the watermark you are trying to remove.
+
+If there are multiple watermarks you will have to do this once for each one, taking note of the watermarks coordinates.
+
+Now that we have those coordinates the rest is actually very simple. You will need ffmpeg installed.
+
+
+Below is a sample bash script:
+
+#!/bin/bash
+# Replace the delogo values for what you found in avidemuxs
+# For multiple watermarks you will have to run ffmpeg once for each one,
+# saving and then working off of temp files in the process until you've applied all filters
+# Pretty trivial to script but just ask someone if you get stuck
+mkdir -p ~/delogo
+for video in $(ls *.mp4); do
+	ffmpeg -i $video -filter:v "delogo=x=90:y=120:w=389:h=97" ~/delogo/$video
+done
